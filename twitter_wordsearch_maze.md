@@ -15,9 +15,8 @@ A playable game.
 * Once completed, displays the tweet and author to the user, and the user's score.
 
 ##### Libraries Used:
-* Requests
-* BS4
-* Aspirational: Some type of visualization library. (PIL?)
+* Tweepy
+* PIL
 
 ##### Structure needed:
 * Back-end to scrape twitter, scrub text into readable format, return text for the maze generator.
