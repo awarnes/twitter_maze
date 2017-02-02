@@ -4,7 +4,7 @@ Testing Tweepy API functions
 
 
 from private import secrets
-import tweepy
+import tweepy, pickle
 from random import randint
 
 
@@ -25,10 +25,7 @@ random_trend = randint(0, len(usa_trends[0]['trends']))
 
 search_trend = usa_trends[0]['trends'][random_trend]['name']
 
-print(search_trend)
+top_10_tweets_from_search_trend = api.search(search_trend, count=3, result_type='popular', lang='en')
 
-top_10_tweets_from_search_trend = api.search(search_trend, count=10, result_type='popular', lang='en')
-
-for tweet in top_10_tweets_from_search_trend:
-    print(tweet.text)
-    print('-'*len(tweet.text))
+#  NEED TO PICKLE THE FILE FOR OFFLINE USE!!!!
+#  NEED TO LEARN ABOUT PICKLING!!!!!
