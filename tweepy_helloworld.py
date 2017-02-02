@@ -18,14 +18,31 @@ usa_woeid = '23424977'
 
 usa_trends = api.trends_place(usa_woeid)
 
-# for trend in usa_trends[0]['trends']:
-#     print(trend['name'])
 
 random_trend = randint(0, len(usa_trends[0]['trends']))
 
 search_trend = usa_trends[0]['trends'][random_trend]['name']
 
-top_10_tweets_from_search_trend = api.search(search_trend, count=3, result_type='popular', lang='en')
+print(search_trend)
 
-#  NEED TO PICKLE THE FILE FOR OFFLINE USE!!!!
-#  NEED TO LEARN ABOUT PICKLING!!!!!
+top_10_tweets_from_search_trend = api.search(search_trend, count=10, result_type='popular', lang='en')
+
+for tweet in top_10_tweets_from_search_trend:
+    print(tweet.text)
+    print('-'*len(tweet.text))
+
+print("Do you want to pickle this tweet object? ")
+pickle_yn = input("Y/N: ")
+
+if 'y' in pickle_yn.lower():
+
+    file_path = "/Users/alexanderwarnes/Documents/abw_codes/Git/twitter_maze/private/top_10_tweets_data.txt"
+
+    with open(file_path, 'wb') as file:
+        try:
+            pickle.dump(top_10_tweets_from_search_trend, file, protocol=pickle.HIGHEST_PROTOCOL)
+        except pickle.PicklingError:
+            print("There was an error pickling the tweet_objects!")
+
+else:
+    pass
