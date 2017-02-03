@@ -10,7 +10,10 @@ with open(file_path, 'rb') as file:
 
 for tweet in top_10_tweets_data:
     print("Text:")
-    print(re.sub(r'(https\:\/\/.*)$','',tweet.text))
+    text = re.sub(r'( https\:\/\/.*)$','',tweet.text)
+    print(text)
+    print("Length of text:")
+    print(len(text))
     print()
     print("Tweet ID:")
     print(tweet.id)
