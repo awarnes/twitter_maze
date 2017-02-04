@@ -1,4 +1,6 @@
 import tweepy, pickle, re
+from random import choice
+
 
 file_path = "/Users/alexanderwarnes/Documents/abw_codes/Git/twitter_maze/private/top_10_tweets_data.txt"
 
@@ -6,28 +8,17 @@ with open(file_path, 'rb') as file:
     top_10_tweets_data = pickle.load(file)
 
 
+def tweet_scrubber(data):
+    tweet_texts = list()
+
+    for tweet in data:
+        text = re.sub(r'( https\:\/\/.*)$','',tweet.text)
+        text = re.sub(r'[\n\t]', ' ', text)
+        tweet_texts.append(text)
 
 
-for tweet in top_10_tweets_data:
-    print("Text:")
-    text = re.sub(r'( https\:\/\/.*)$','',tweet.text)
-    print(text)
-    print("Length of text:")
-    print(len(text))
-    print()
-    print("Tweet ID:")
-    print(tweet.id)
-    print()
-    print("User Info:")
-    print("{}, {}".format(tweet.user.name, tweet.user.description))
-    print()
-    print("Retweet Count:")
-    print(tweet.retweet_count)
-    print()
-    print("Favorite Count:")
-    print(tweet.favorite_count)
-    # print()
-    # print("Full Tweet:")
-    # print(tweet)
-    print('-'*len(tweet.text))
+    random_choices = [text for text in tweet_texts if len(text) > 60]
 
+    return choice(random_choices)
+
+print(tweet_scrubber(top_10_tweets_data))
