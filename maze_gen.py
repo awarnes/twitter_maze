@@ -12,14 +12,14 @@ def scratchpad():
     Create a path for the tweet.
     """
 
+    # TODO: put all of this in a try
+
     tweet_list = list(tweet)
     board = list()
 
     for i in range(20):
         line = '.' * 20
         board.append(list(line))
-
-    seen = list()
 
     options = [move_down, move_up, move_left, move_right]
     row = 10
@@ -30,15 +30,16 @@ def scratchpad():
     while counter < 140:
         travel_length = randint(1, 4)
         direction = choice(options)
-        # print(travel_length, direction)
         for i in range(travel_length):
-            row, column = direction(row, column)
-            # TODO: somewhere in here is where the loop isn't behaving
-            if check_move(row, column, seen) == True:
-                counter += 1
+            test_row, test_column = direction(row, column)
+            if check_move(test_row, test_column, path):
+
+                row, column = test_row, test_column
                 path.append((row, column))
-                seen.append((row, column))
-                # print(row, column)
+                counter += 1
+
+            else:
+                break
 
     for i, t in zip(tweet_list, path):
         row = t[0]
@@ -46,10 +47,9 @@ def scratchpad():
         print(i, (row, column))
         board[row][column] = i
 
-    print_grid(board)
 
-    # for row in board:
-    #     print(row)
+    for row in board:
+        print(row)
 
 
 def move_down(row, column):
@@ -72,20 +72,27 @@ def move_right(row, column):
     return row, column
 
 
-def check_move(row, column, seen):
+def check_move(row, column, path):
+    # row_check = bool(-1 < row < 20)
+    # column_check = bool(-1 < column < 20)
+    # path_check = bool((row, column) not in path)
+    #
+    # result = all([row_check, column_check, path_check])
+    # return result
+
+    # if -1 < row < 20 and -1 < column < 20 and (row, column) not in path:
+    #     return True
+    # else:
+    #     return False
+
     if -1 < row < 20:
         if -1 < column < 20:
-            if (row, column) not in seen:
+            if (row, column) not in path:
                 return True
     else:
         return False
 
+#     TODO: test all these
 
-def print_grid(board):
-    print_counts = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19']
-    line_count = 0
-    for row in board:
-        print(print_counts[line_count], row)
-        line_count += 1
 
 scratchpad()
