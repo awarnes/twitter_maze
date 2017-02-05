@@ -17,7 +17,7 @@ def tweet_scrubber(data):
         tweet_texts.append(text)
 
 
-    random_choices = [text for text in tweet_texts if len(text) > 60]
+    random_choices = [text for text in tweet_texts if len(text) >= 60]
 
     return choice(random_choices)
 
