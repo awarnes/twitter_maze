@@ -25,6 +25,7 @@ class Tweet:
         auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
         self.api = tweepy.API(auth)
         self.woeid = woeid
+
         self.file_path = file_path
 
         self.trends = None
@@ -34,7 +35,7 @@ class Tweet:
 
     def get_trends(self):
         """
-        Returns top trends from the given woeid (default=USA)
+        Returns top trends as a trends object from the given woeid (default=USA).
         """
 
         self.trends = api.trends_place(woeid)
@@ -44,36 +45,49 @@ class Tweet:
 
     def get_popular_tweets(self, amount):
         """
-        Returns top tweets from a randomly selected trend.
+        Returns top tweets as a search object from a randomly selected trend.
         """
 
         if self.trends == None:
             self.get_trends()
 
-        random_trend = randint(0, len(usa_trends[0]['trends']))
+        random_trend = randint(0, len(self.trends[0]['trends']))
 
-        search_trend = usa_trends[0]['trends'][random_trend]['name']
+        search_trend = self.trends[0]['trends'][random_trend]['name']
 
-        print(search_trend)
-
-        top_10_tweets_from_search_trend = api.search(search_trend, count=10, result_type='popular', lang='en')
+        self.found_tweets = api.search(search_trend, count=amount, result_type='popular', lang='en')
 
         return None
 
 
-    def tweet_scrubber(self):
+    def tweet_scrubber(self, length):
         """
-        Returns the scrubbed text of a tweet and the tweet object itself separately.
+        Returns the scrubbed text of a random tweet and the tweet object itself separately.
         """
 
-        pass
+        tweet_texts = list()
+
+        if self.found_tweets == None:
+            self.get_popular_tweets()
+
+        for tweet in self.found_tweets:
+            text = re.sub(r'( https\:\/\/.*)$','',tweet.text)
+            text = re.sub(r'[\n\t]', ' ', text)
+            tweet_texts.append(text)
 
 
-    def set_file(self):
+        random_choices = [text for text in tweet_texts if len(text) >= length]
+
+        return choice(random_choices)
+
+
+    def set_file_path(self):
         """Changes the save/load file for pickling."""
 
         print("What is the path to the file you need to use?")
         self.file_path = input(">>> ")
+
+        return None
 
 
     def pickle(self, pickling_thingy):
