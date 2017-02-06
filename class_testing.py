@@ -90,12 +90,23 @@ class Tweet:
         return None
 
 
-    def pickle(self, pickling_thingy):
+    def pickle(self):
         """
-        Saves a tweet, search, or trend object to a file for later retrieval.
+        Saves the current tweet, search, and trend objects to a file for later retrieval.
         """
 
-        print("Do you want to pickle this tweet object? ")
+        # options = ("Search", "Trends", "Tweet")
+        # print("Which type of object are you pickling?")
+        # for opt_index, option in enumerate(options, start=1):
+        #     print("{}: {}".format(opt_index, option))
+        #
+        # try:
+        #     opt_choice = int(input("Please enter the number: "))
+        # except ValueError:
+        #     print("Sorry, cannot pickle that!")
+
+
+        print("Do you want to pickle these tweet objects? ")
         pickle_yn = input("Y/N: ")
 
         if 'y' in pickle_yn.lower():
@@ -104,7 +115,7 @@ class Tweet:
                 try:
                     pickle.dump(pickling_thingy, file, protocol=pickle.HIGHEST_PROTOCOL)
                 except pickle.PicklingError:
-                    print("There was an error pickling the tweet_objects!")
+                    print("There was an error pickling the twitter objects!")
 
             return None
 
