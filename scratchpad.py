@@ -7,7 +7,7 @@ from random import randint
 tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'
 
 
-def build_board():
+def scratchpad():
     """
     Create a path for the tweet.
     """
@@ -43,7 +43,8 @@ def build_board():
                     break
             else:
                 print('spiral of death')
-                return build_board()
+                return scratchpad()
+
 
     for i, t in zip(tweet_list, path):
         row = t[0]
@@ -75,12 +76,19 @@ def move_right(row, column):
 
 
 def check_move(row, column, path):
-    row_check = bool(-1 < row < 20)
-    column_check = bool(-1 < column < 20)
-    path_check = bool((row, column) not in path)
+    if -1 < row < 20:
+        if -1 < column < 20:
+            if (row, column) not in path:
+                return True
+    else:
+        return False
 
-    result = all([row_check, column_check, path_check])
-    return result
 
 
-build_board()
+def print_board(path):
+    """
+    Take in the path, print the board with the extra characters filled in.
+    """
+
+
+scratchpad()
