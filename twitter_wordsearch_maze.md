@@ -9,15 +9,15 @@ A playable game.
 1. Scrape twitter for the top 5-10 most popular tweets at the moment.
 * Choose one at random.
 * Implant it in a grid (as the correct path through the maze).
+    - Will remove user tags, but keep hashtags
 * Randomly fill in the remainder of the grid to obfuscate the path.
 * Allow the user to traverse the grid.
 * The user will be scored on the number of moves it takes them to complete the maze (minimum is the len(tweet)).
 * Once completed, displays the tweet and author to the user, and the user's score.
 
 ##### Libraries Used:
-* Requests
-* BS4
-* Aspirational: Some type of visualization library. (PIL?)
+* Tweepy
+* PIL
 
 ##### Structure needed:
 * Back-end to scrape twitter, scrub text into readable format, return text for the maze generator.
