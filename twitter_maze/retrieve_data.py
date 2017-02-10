@@ -4,25 +4,24 @@ retrieval and scrubbing in one importable place.
 """
 
 
-import (tweepy, pickle)
+import tweepy, pickle, re
 from random import (randint, choice)
-from re import (scrub)
 
 from private import secrets
 
 
-class TwitterAttributes:
+class TwitterAttributes(object):
 
     CONSUMER_KEY = secrets.CONSUMER_KEY
     CONSUMER_SECRET = secrets.CONSUMER_SECRET
     ACCESS_TOKEN = secrets.ACCESS_TOKEN
     ACCESS_SECRET = secrets.ACCESS_SECRET
 
-    def __init__(self, woeid='23424977', file_path="/Users/alexanderwarnes/Documents/abw_codes/Git/twitter_maze/private/top_10_tweets_data.p"):
+    def __init__(self, woeid='23424977', file_path="/private/top_10_tweets_data.p"):
         """Accept option of location (default USA) and sets-up the api for other methods."""
 
-        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-        auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+        auth = tweepy.OAuthHandler(TwitterAttributes.CONSUMER_KEY, TwitterAttributes.CONSUMER_SECRET)
+        auth.set_access_token(TwitterAttributes.ACCESS_TOKEN, TwitterAttributes.ACCESS_SECRET)
         self.api = tweepy.API(auth)
         self.woeid = woeid
 
@@ -30,17 +29,19 @@ class TwitterAttributes:
 
         self.trends = None
         self.found_tweets = None
-        self.chosen_tweet = None
 
+        self.get_trends()
+        self.get_popular_tweets(10)
+        self.chosen_tweet = self.tweet_scrubber(60)
 
     def get_trends(self):
         """
         Returns top trends as a trends attribute from the given woeid (default=USA).
         """
 
-        self.trends = api.trends_place(woeid)
+        self.trends = self.api.trends_place(self.woeid)
 
-        return None
+        return self
 
 
     def get_popular_tweets(self, amount):
@@ -55,9 +56,9 @@ class TwitterAttributes:
 
         search_trend = self.trends[0]['trends'][random_trend]['name']
 
-        self.found_tweets = api.search(search_trend, count=amount, result_type='popular', lang='en')
+        self.found_tweets = self.api.search(search_trend, count=amount, result_type='popular', lang='en')
 
-        return None
+        return self
 
 
     def tweet_scrubber(self, length):
@@ -87,7 +88,7 @@ class TwitterAttributes:
         print("What is the path to the file you need to use?")
         self.file_path = input(">>> ")
 
-        return None
+        return self
 
 
     def pickle(self):
@@ -117,7 +118,7 @@ class TwitterAttributes:
                 except pickle.PicklingError:
                     print("There was an error pickling the twitter attributes!")
 
-            return None
+            return self
 
 
     def unpickle(self):

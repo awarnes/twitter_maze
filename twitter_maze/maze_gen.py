@@ -29,7 +29,7 @@ def find_path(tweet):
     row, column = 0, 0
     path = list()
 
-    while len(path) < len(test_tweet):
+    while len(path) < len(tweet):
         if len(path) < 6:
             travel_length = 1
             direction = choice(['down', 'right'])
@@ -80,6 +80,9 @@ def print_board(tweet):
     for row in board:
         print(' '.join(row))
 
+    print()
+    print(tweet)
+
 
 def run(tweet):
     board = make_board(tweet)
@@ -88,5 +91,5 @@ def run(tweet):
     return path, board
 
 
-test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
-print_board(test_tweet)
+# test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
+# print_board(test_tweet)
