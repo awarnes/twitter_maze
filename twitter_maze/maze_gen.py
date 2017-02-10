@@ -60,7 +60,7 @@ def make_board(tweet):
 
     tweet_list = list(tweet)
     path = find_path(tweet)
-    all_chars = char_frequency('letter_freq.txt', 'punc_freq.txt')
+    all_chars = char_frequency('frequency_tables/letter_freq.txt', 'frequency_tables/punc_freq.txt')
     board = [list(('%'*25)) for _ in range(25)]
 
     for i, t in zip(tweet_list, path):
