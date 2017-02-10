@@ -2,6 +2,9 @@
 
 The players are presented with a grid of letters with _only one acceptable way_ from start to finish: through the text of a randomly selected 'popular' tweet.
 
+#### MVP
+A playable game.
+
 ##### The program will:
 1. Scrape twitter for the top 5-10 most popular tweets at the moment.
 * Choose one at random.
