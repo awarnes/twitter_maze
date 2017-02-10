@@ -11,7 +11,7 @@ from re import (scrub)
 from private import secrets
 
 
-class Tweet:
+class TwitterAttributes:
 
     CONSUMER_KEY = secrets.CONSUMER_KEY
     CONSUMER_SECRET = secrets.CONSUMER_SECRET
@@ -35,7 +35,7 @@ class Tweet:
 
     def get_trends(self):
         """
-        Returns top trends as a trends object from the given woeid (default=USA).
+        Returns top trends as a trends attribute from the given woeid (default=USA).
         """
 
         self.trends = api.trends_place(woeid)
@@ -45,7 +45,7 @@ class Tweet:
 
     def get_popular_tweets(self, amount):
         """
-        Returns top tweets as a search object from a randomly selected trend.
+        Returns top tweets as a search attribute from a randomly selected trend.
         """
 
         if self.trends == None:
@@ -62,7 +62,7 @@ class Tweet:
 
     def tweet_scrubber(self, length):
         """
-        Returns the scrubbed text of a random tweet and the tweet object itself separately.
+        Returns the scrubbed text of a random tweet and the tweet attribute itself separately.
         """
 
         tweet_texts = list()
@@ -92,7 +92,7 @@ class Tweet:
 
     def pickle(self):
         """
-        Saves the current tweet, search, and trend objects to a file for later retrieval.
+        Saves the current tweet, search, and trend attributes to a file for later retrieval.
         """
 
         # options = ("Search", "Trends", "Tweet")
@@ -106,7 +106,7 @@ class Tweet:
         #     print("Sorry, cannot pickle that!")
 
 
-        print("Do you want to pickle these tweet objects? ")
+        print("Do you want to pickle the current twitter attributes? ")
         pickle_yn = input("Y/N: ")
 
         if 'y' in pickle_yn.lower():
@@ -115,14 +115,14 @@ class Tweet:
                 try:
                     pickle.dump(pickling_thingy, file, protocol=pickle.HIGHEST_PROTOCOL)
                 except pickle.PicklingError:
-                    print("There was an error pickling the twitter objects!")
+                    print("There was an error pickling the twitter attributes!")
 
             return None
 
 
     def unpickle(self):
         """
-        Loads an object from a file (tweet, search, and trend).
+        Loads the attributes from a file (tweet, search, and trend).
         """
 
         with open(file_path, 'rb') as file:
