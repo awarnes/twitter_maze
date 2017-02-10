@@ -1,66 +1,50 @@
 """
-Play around with building the board
+Take in a tweet as a text string, randomly generate a path through the board, then fill in the board
+with random characters from an external character set.
 """
 from random import choice, randint
 from char_freq import char_frequency
 
 
-def move_down(row, column):
-    row += 1
-    return row, column
-
-
-def move_up(row, column):
-    row -= 1
-    return row, column
-
-
-def move_left(row, column):
-    column -= 1
-    return row, column
-
-
-def move_right(row, column):
-    column += 1
-    return row, column
+def move(row, column, direction):
+    moves = {'down': (row + 1, column), 'up': (row - 1, column), 'left': (row, column - 1), 'right': (row, column + 1)}
+    result = moves[direction]
+    return result
 
 
 def check_move(row, column, path):
-    if -1 < row < 20:
-        if -1 < column < 20:
-            if (row, column) not in path:
-                return True
-    else:
-        return False
+    check_row = -1 < row < 20
+    check_column = -1 < column < 20
+    check_path = (row, column) not in path
+
+    result = all([check_row, check_column, check_path])
+    return result
 
 
 def find_path(tweet):
     """
     Create a path for the tweet.
     """
-    options = [move_down, move_up, move_left, move_right]
-    row = 0
-    column = 0
-    counter = 0
+    options = ['down', 'up', 'left', 'right']
+    row, column = 0, 0
     path = list()
 
-    while counter < len(test_tweet):
-        if counter < 6:
+    while len(path) < len(test_tweet):
+        if len(path) < 6:
             travel_length = 1
-            direction = choice([move_down, move_right])
+            direction = choice(['down', 'right'])
         else:
             travel_length = randint(3, 8)
             direction = choice(options)
 
-        for i in range(travel_length):
-            test_row, test_column = direction(row, column)
+        for _ in range(travel_length):
+            test_row, test_column = move(row, column, direction)
 
-            moves = [o(row, column) for o in options]
+            moves = [move(row, column, o) for o in options]
             if any([check_move(t[0], t[1], path) for t in moves]):
                 if check_move(test_row, test_column, path):
                     row, column = test_row, test_column
                     path.append((row, column))
-                    counter += 1
                 else:
                     break
             else:
@@ -73,14 +57,11 @@ def make_board(tweet):
     """
     Take in the path, print the board with the extra characters filled in.
     """
+
     tweet_list = list(tweet)
     path = find_path(tweet)
     all_chars = char_frequency('letter_freq.txt', 'punc_freq.txt')
-
-    board = list()
-    for i in range(25):
-        line = '%' * 25
-        board.append(list(line))
+    board = [list(('%'*25)) for _ in range(25)]
 
     for i, t in zip(tweet_list, path):
         row = t[0]
