@@ -71,6 +71,8 @@ def make_board(tweet):
     for i, row in enumerate(board):
         board[i] = [choice(all_chars) if x is '%' else x for x in row]
 
+    board[0][0] = ' '
+
     return board
 
 
