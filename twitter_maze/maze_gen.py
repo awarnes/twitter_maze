@@ -73,24 +73,17 @@ def make_board(tweet):
 
     board[0][0] = ' '
 
-    return board
+    return board, path
 
 
 def print_board(tweet):
     board = make_board(tweet)
 
     for row in board:
-        print(' '.join(row))
+        print('  '.join(row))
 
     print()
     print(tweet)
-
-
-def run(tweet):
-    board = make_board(tweet)
-    path = find_path(tweet)
-
-    return path, board
 
 
 # test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
