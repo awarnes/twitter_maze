@@ -22,6 +22,7 @@ class TwitterAttributes(object):
 
         auth = tweepy.OAuthHandler(TwitterAttributes.CONSUMER_KEY, TwitterAttributes.CONSUMER_SECRET)
         auth.set_access_token(TwitterAttributes.ACCESS_TOKEN, TwitterAttributes.ACCESS_SECRET)
+
         self.api = tweepy.API(auth)
         self.woeid = woeid
 
@@ -72,13 +73,13 @@ class TwitterAttributes(object):
             self.get_popular_tweets()
 
         for tweet in self.found_tweets:
-            text = re.sub(r'( https\:\/\/.*)$','',tweet.text)
+            text = re.sub(r'( https\:\/\/.*)$', '', tweet.text)
             text = re.sub(r'[\n\t]', ' ', text)
             tweet_texts.append(text)
 
 
         random_choices = [text for text in tweet_texts if len(text) >= length]
-
+        # TODO: Try except reraise block if no tweets in random_choices
         return choice(random_choices)
 
 

@@ -66,6 +66,6 @@ def run(tweet):
     print('You did it! \n\nScore: {} \nBest possible: {} \nTweet: {}'.format(score, len(tweet), tweet))
 
 
-test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
-# test_tweet = 'TEST'
-run(test_tweet)
+# test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
+# # test_tweet = 'TEST'
+# run(test_tweet)
