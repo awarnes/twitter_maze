@@ -1,5 +1,5 @@
 """
-Scratchpad for the user interface.
+Draft of the user interface, with rudimentary display.
 """
 import maze_gen
 import os
