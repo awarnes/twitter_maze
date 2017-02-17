@@ -1,14 +1,17 @@
 import curses
 import game_play
 import maze_gen
+from retrieve_data import TwitterAttributes
 
 
 def main():
 
 
-    board, path, cboard = new_game()
+    board, path, cboard, tweet, cscore, ctweet = new_game()
 
-
+    #  Where the player is in the path.
+    row, column = 0, 0
+    #  Where the player needs to be displayed on the board.
     prow, pcolumn = 0, 0
     score = 0
     counter = 0
@@ -17,21 +20,27 @@ def main():
         got_it = False
         while not got_it:
             score += 1
-            guess = select_move(prow, pcolumn)
+            guess, move = select_move(row, column)
             if guess == coord:
+                if move == 'left':
+                    pcolumn -= 3
+                elif move == 'right':
+                    pcolumn += 3
                 counter += 1
-                prow, pcolumn = coord
+                row, column = coord
+                prow = row
+                move
                 got_it=True
-                display(prow, pcolumn, board, cboard)
-                # print('\nTweet so far: {} \nTries so far: {}'.format(tweet[:counter],  score))
             else:
                 curses.beep()
                 y, x = stdscr.getmaxyx()
                 msg = "Can't move there!"
                 stdscr.addstr(28, ((x // 2)-(len(msg)//2)), msg, curses.A_BLINK)
                 stdscr.refresh()
+            display(row, column, prow, pcolumn, board, cboard, score, cscore, tweet, counter, ctweet)
 
-    print('You did it! \n\nScore: {} \nBest possible: {} \nTweet: {}'.format(score, len(tweet), tweet))
+    won_game(score, tweet)
+
 
 def select_move(row, column):
     """
@@ -54,34 +63,40 @@ def select_move(row, column):
         return None
 
     result = maze_gen.move(row, column, move)
-    return result
-# def move_handler(key_assign=None, key_dict={ord('t'):4}):
-#     """
-#     Implements the game logic.
-#     """
-#
-#     if key_assign:
-#         key_dict[ord(key_assign[0])] = key_assign[1]
-#     else:
-#         c = stdscr.getch()
-#         if c in (ord('Q'), ord('q')):
-#             return False
-#         elif c not in key_dict.keys():
-#             curses.beep()
-#             curses.flash()
-#             y, x = stdscr.getmaxyx()
-#             msg = "Can't move there!"
-#             stdscr.addstr(28, ((x // 2)-(len(msg)//2)), msg)
-#             stdscr.refresh()
-#             return True
-#         else:
-#             stdscr.addstr(28, 15, ' '*40)
-#             stdscr.refresh()
-#             curses.napms(2000)
-#             return key_dict[c]()
+    return result, move
 
 
-def display(row, column, board, cboard):
+def won_game(score, tweet):
+    """
+    The win screen!
+    """
+    stdscr.clear()
+    stdscr.refresh()
+    welcome_messages = [
+    "Congratulations!", 'You won!', "", "Final Score:", "{}/{}".format(score, len(tweet)), "",
+    "1: New Game", "2: Quit"]
+
+    y, x = stdscr.getmaxyx()
+
+    curses.curs_set(0)
+
+    for index, msg in enumerate(welcome_messages):
+        stdscr.addstr((y // 2) - (9 - index), ((x // 2)-(len(msg)//2)), msg)
+
+    leave = False
+
+    stdscr.refresh()
+    while not leave:
+        k = stdscr.getch()
+        if k in (ord('n'), ord('N'), ord('1')):
+            leave = True
+            main()
+        elif k in (ord('q'), ord('Q'), ord('2')):
+            leave = True
+            exit()
+
+
+def display(row, column, prow, pcolumn, board, cboard, score, cscore, tweet, counter, ctweet):
     """
     Updates the displays for score, tweet, and board.
     """
@@ -90,8 +105,18 @@ def display(row, column, board, cboard):
         krow = '  '.join(krow)
         cboard.addstr(1+index, 1, krow)
 
-    cboard.addch(row+1, column+1, board[row][column], curses.color_pair(1))
+    cboard.addch(prow+1, pcolumn+1, board[row][column], curses.A_REVERSE)
 
+    if score < 100:
+        cscore.addstr(3, 1, "0"+str(score))
+    else:
+        cscore.addstr(3, 1, str(score))
+
+    ctweet.addstr(1,1, tweet[:counter], curses.A_UNDERLINE)
+
+
+    cscore.refresh()
+    ctweet.refresh()
     cboard.refresh()
 
 
@@ -174,6 +199,8 @@ def init_board(board):
         row = '  '.join(row)
         cboard.addstr(1+index, 1, row)
 
+    cboard.addch(1, 1, ' ', curses.A_REVERSE & curses.A_BLINK)
+
     cboard.refresh()
     return cboard
 
@@ -195,15 +222,20 @@ def init_score(tweet):
 
     cscore.refresh()
 
+    return cscore
+
 
 def init_tweet(tweet):
     """initializes the 'tweet' window"""
 
     ctweet = curses.newwin(4, 85, 29, 2)
 
-    ctweet.addstr(1,1,tweet)
+    ctweet.addstr(1,1," "*len(tweet), curses.A_UNDERLINE)
     ctweet.box()
     ctweet.refresh()
+
+    return ctweet
+
 
 def new_game():
     """Starts a new game and initializes the screen."""
@@ -211,16 +243,20 @@ def new_game():
     stdscr.clear()
     stdscr.refresh()
 
-    test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
+    # test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
 
-    board, path = maze_gen.make_board(test_tweet)
+    twitter_attributes = TwitterAttributes()
+
+    tweet_text = twitter_attributes.chosen_tweet.upper()
+
+    board, path = maze_gen.make_board(tweet_text)
 
     cboard = init_board(board)
-    init_score(test_tweet)
+    cscore = init_score(tweet_text)
     init_moves()
-    init_tweet(test_tweet)
+    ctweet = init_tweet(tweet_text)
 
-    return board, path, cboard
+    return board, path, cboard, tweet_text, cscore, ctweet
 
 #  To set the terminal to the correct size if less than 89x34
 print("\x1b[8;34;89t")
@@ -229,6 +265,7 @@ stdscr = curses.initscr()
 
 #  To ensure that the terminal resize is actually run...
 stdscr.getch()
+
 
 curses.start_color()
 curses.use_default_colors()
