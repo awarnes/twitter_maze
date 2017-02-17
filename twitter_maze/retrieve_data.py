@@ -34,7 +34,7 @@ class TwitterAttributes(object):
 
         self.get_trends()
         self.get_popular_tweets(10)
-        self.chosen_tweet = self.tweet_scrubber(60)
+        self.chosen_tweet, self.chosen_tweet_text = self.tweet_scrubber(60)
 
     def get_trends(self):
         """
@@ -68,18 +68,18 @@ class TwitterAttributes(object):
         Returns the scrubbed text of a random tweet and the tweet attribute itself separately.
         """
 
-        tweet_texts = list()
+        tweets = list()
 
         if self.found_tweets == None:
             self.get_popular_tweets()
 
-        for tweet in self.found_tweets:
-            text = re.sub(r'( https\:\/\/.*)$', '', tweet.text)
-            text = re.sub(r'[\n\t]', ' ', text)
-            tweet_texts.append(text)
+        for tweet_object in self.found_tweets:
+            tweet_text = re.sub(r'( https\:\/\/.*)$', '', tweet_object.text)
+            tweet_text = re.sub(r'[\n\t]', ' ', tweet_text)
+            tweets.append((tweet_object, tweet_text))
 
 
-        random_choices = [text for text in tweet_texts if len(text) >= length]
+        random_choices = [tweet for tweet in tweets if len(tweet[1]) >= length]
 
         #  Sometimes there aren't tweets of a given length.
         try:

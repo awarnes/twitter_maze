@@ -11,29 +11,12 @@ import maze_gen
 from retrieve_data import TwitterAttributes
 
 
-def internet(host="8.8.8.8", port=53, timeout=3):
-    """
-    Host: 8.8.8.8 (google-public-dns-a.google.com)
-    OpenPort: 53/tcp
-    Service: domain (DNS/TCP)
-
-    Used to ensure internet connection for getting tweet information from Twitter.
-
-    From User: 7h3rAm
-    Answer On: Oct 14 '15
-    On Post: http://stackoverflow.com/questions/3764291/checking-network-connection
-    """
-
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except Exception as ex:
-        return False
-
 def main():
+    """
+    The main logic of the game.
+    """
 
-    board, path, cboard, tweet, cscore, ctweet = new_game()
+    board, path, cboard, tweet_text, cscore, ctweet, tweet_object = new_game()
 
     sy, sx = stdscr.getmaxyx()
 
@@ -75,35 +58,24 @@ def main():
                     msg = "Can't move there!"
                     stdscr.addstr(28, ((sx // 2)-(len(msg)//2)), msg, curses.A_BLINK)
                     stdscr.refresh()
-                display(row, column, prow, pcolumn, board, cboard, score, cscore, tweet, counter, ctweet)
+                display(row, column, prow, pcolumn, board, cboard, score, cscore, tweet_text, counter, ctweet)
             else:
                 stdscr.addstr(28, 0, ' '*89)
                 stdscr.refresh()
                 msg = "That's not a valid move!"
                 stdscr.addstr(28, ((sx // 2)-(len(msg)//2)), msg, curses.A_BLINK)
 
-    won_game(score, tweet)
+    won_game(score, tweet_text, tweet_object)
 
 
-def select_move(row, column, move):
-    """
-    Ask the user for the next selection, return new coordinates.
-    """
-
-
-    result = maze_gen.move(row, column, move)
-    return result, move
-
-
-def won_game(score, tweet):
+def won_game(score, tweet_text, tweet_object):
     """
     The win screen!
     """
     stdscr.clear()
     stdscr.refresh()
-    won_messages = [
-    "Congratulations!", 'You won!', "", "Final Score:", "{}/{}".format(score, len(tweet)), '',
-    'Tweet:', tweet, '', "1: New Game", "2: Quit"]
+    won_messages = ["Congratulations!", 'You won!', "", "Final Score:", "{}/{}".format(score, len(tweet_text)),
+                    '', 'Tweet:', tweet_text, '', 'Author:', tweet_object.user.screen_name, '', "1: New Game", "2: Quit"]
 
     y, x = stdscr.getmaxyx()
 
@@ -178,7 +150,6 @@ def front_menu(stdscr):
         elif k in (ord('q'), ord('Q'), ord('2')):
             leave = True
             exit()
-
 
 def init_moves():
     """
@@ -273,18 +244,21 @@ def new_game():
     stdscr.clear()
     stdscr.refresh()
 
-    # test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
+    test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
 
-    #  Ensure there is an internet connection load a pre-pickled tweet instead.
-    if internet():
-        #  Ensure that there are proper Twitter API keys accessible.
-        try:
-            twitter_attributes = TwitterAttributes()
-            tweet_text = twitter_attributes.chosen_tweet.upper()
-        except IndexError:
-            """Unpickle here too..."""
-    else:
-        twitter_attributes = save_and_load.load()
+    #  TODO: Ensure there is an internet connection, load a pre-pickled tweet instead.
+
+    #  TODO: Ensure that there are proper Twitter API keys accessible, load a pre-pickled tweet instead.
+
+    try:
+        twitter_attributes = TwitterAttributes()
+        tweet_object = twitter_attributes.chosen_tweet
+        tweet_text = twitter_attributes.chosen_tweet_text.upper()
+    except IndexError:
+        """Unpickle here too..."""
+        # twitter_attributes = save_and_load.load()
+        tweet_text = test_tweet
+        tweet_object = None
 
     board, path = maze_gen.make_board(tweet_text)
 
@@ -293,7 +267,7 @@ def new_game():
     init_moves()
     ctweet = init_tweet(tweet_text)
 
-    return board, path, cboard, tweet_text, cscore, ctweet
+    return board, path, cboard, tweet_text, cscore, ctweet, tweet_object
 
 #  To set the terminal to the correct size if less than 89x34
 print("\x1b[8;34;89t")
@@ -311,5 +285,3 @@ curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
 
 
 curses.wrapper(front_menu)
-
-# signal.signal(signal.SIGWINCH, sigwinch_handler())
