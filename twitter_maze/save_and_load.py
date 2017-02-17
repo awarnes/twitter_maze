@@ -34,10 +34,12 @@ def save(pickle_path, t_object):
                 print("There was an error pickling the twitter attributes!")
 
 
-def load(pickle_path):
+def load():
     """
-    Loads the attributes from a file (tweet, search, and trend).
+    Loads the attributes from a file (trends, tweets, and chosen tweet).
     """
+
+    global pickle_path
 
     pickles = os.listdir(pickle_path)
 
@@ -62,5 +64,3 @@ k = (t_object.trends, t_object.found_tweets, t_object.chosen_tweet)
 save(pickle_path, k)
 
 k = load(pickle_path)
-
-print(k)

@@ -43,6 +43,3 @@ if 'y' in pickle_yn.lower():
             pickle.dump(top_10_tweets_from_search_trend, file, protocol=pickle.HIGHEST_PROTOCOL)
         except pickle.PicklingError:
             print("There was an error pickling the tweet objects!")
-
-else:
-    pass
