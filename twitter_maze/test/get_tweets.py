@@ -36,13 +36,13 @@ pickle_yn = input("Y/N: ")
 
 if 'y' in pickle_yn.lower():
 
-    file_path = "/Users/alexanderwarnes/Documents/abw_codes/Git/twitter_maze/private/top_10_tweets_data.txt"
+    file_path = os.getcwd() + "/pickled_tweets/"
 
     with open(file_path, 'wb') as file:
         try:
             pickle.dump(top_10_tweets_from_search_trend, file, protocol=pickle.HIGHEST_PROTOCOL)
         except pickle.PicklingError:
-            print("There was an error pickling the tweet_objects!")
+            print("There was an error pickling the tweet objects!")
 
 else:
     pass

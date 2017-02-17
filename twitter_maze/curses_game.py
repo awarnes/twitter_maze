@@ -1,11 +1,38 @@
+"""
+Fully playable game run in a terminal.
+Because it was made with Curses, this will only run in a BSD environment.
+"""
+#  Standard Library
 import curses
+import socket
+
+#  Module Imports
 import game_play
 import maze_gen
 from retrieve_data import TwitterAttributes
 
 
-def main():
+def internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
 
+    Used to ensure internet connection for getting tweet information from Twitter.
+
+    From User: 7h3rAm
+    Answer On: Oct 14 '15
+    On Post: http://stackoverflow.com/questions/3764291/checking-network-connection
+    """
+
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except Exception as ex:
+        return False
+
+def main():
 
     board, path, cboard, tweet, cscore, ctweet = new_game()
 
@@ -245,9 +272,12 @@ def new_game():
 
     # test_tweet = 'I write the best tweets. This tweet is one hundred and forty characters long. This is a tremendous tweet. Every other tweet is a loser. Sad.'.upper()
 
-    twitter_attributes = TwitterAttributes()
-
-    tweet_text = twitter_attributes.chosen_tweet.upper()
+    if internet():
+        twitter_attributes = TwitterAttributes()
+        if twitter_attributes.TwitterAttributes.ACCESS_SECRET:
+            tweet_text = twitter_attributes.chosen_tweet.upper()
+    else:
+        twitter_attributes = twitter_attributes.unpickle()
 
     board, path = maze_gen.make_board(tweet_text)
 
